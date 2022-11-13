@@ -10,7 +10,7 @@ public class Restaurant
     public string ContactEmail { get; set; } = string.Empty;
     public string ContactNumber { get; set; } = string.Empty;
 
-    public int CreatedById { get; set; } = 10;
+    public int? CreatedById { get; set; }
     public virtual User CreatedBy { get; set; }
 
     public int AddressId { get; set; }

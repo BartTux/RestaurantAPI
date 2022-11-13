@@ -46,7 +46,7 @@ namespace RestaurantAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Addresses");
+                    b.ToTable("Addresses", (string)null);
                 });
 
             modelBuilder.Entity("RestaurantAPI.Entities.Dish", b =>
@@ -75,7 +75,7 @@ namespace RestaurantAPI.Migrations
 
                     b.HasIndex("RestaurantId");
 
-                    b.ToTable("Dishes");
+                    b.ToTable("Dishes", (string)null);
                 });
 
             modelBuilder.Entity("RestaurantAPI.Entities.Restaurant", b =>
@@ -101,7 +101,7 @@ namespace RestaurantAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CreatedById")
+                    b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
@@ -123,7 +123,7 @@ namespace RestaurantAPI.Migrations
 
                     b.HasIndex("CreatedById");
 
-                    b.ToTable("Restaurants");
+                    b.ToTable("Restaurants", (string)null);
                 });
 
             modelBuilder.Entity("RestaurantAPI.Entities.Role", b =>
@@ -140,7 +140,7 @@ namespace RestaurantAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("RestaurantAPI.Entities.User", b =>
@@ -180,7 +180,7 @@ namespace RestaurantAPI.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("RestaurantAPI.Entities.Dish", b =>
@@ -204,9 +204,7 @@ namespace RestaurantAPI.Migrations
 
                     b.HasOne("RestaurantAPI.Entities.User", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CreatedById");
 
                     b.Navigation("Address");
 

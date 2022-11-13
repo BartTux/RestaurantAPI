@@ -22,6 +22,12 @@ public class RestaurantDbContext : DbContext
             .IsRequired()
             .HasMaxLength(30);
 
+        modelBuilder.Entity<Restaurant>()
+            .Property(r => r.CreatedById)
+            .IsRequired()
+            .HasDefaultValue(10);
+
+
         modelBuilder.Entity<Dish>()
             .Property(d => d.Name)
             .IsRequired();

@@ -12,7 +12,8 @@ public class ResourceOperationRequirementHandler
                                                    Restaurant restaurant)
     {
         if (requirement.ResourceOperation
-            is ResourceOperation.Create or ResourceOperation.Read)
+            is ResourceOperation.Create 
+            or ResourceOperation.Read)
         {
             context.Succeed(requirement);
         }

@@ -6,9 +6,9 @@ namespace RestaurantAPI.Services.Contracts;
 
 public interface IRestaurantService
 {
-    Restaurant Create(CreateRestaurantDto createRestaurantDto, int userId);
+    Restaurant Create(CreateRestaurantDto createRestaurantDto);
     IEnumerable<RestaurantDto>? GetAll();
     RestaurantDto? GetById(int id);
-    void Update(int id, ModifyRestaurantDto modifyRestaurantDto, ClaimsPrincipal user);
-    void Delete(int id, ClaimsPrincipal user);
+    void Update(int id, ModifyRestaurantDto modifyRestaurantDto);
+    void Delete(int id);
 }

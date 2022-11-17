@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using NLog;
 using System.Security.Claims;
 
 namespace RestaurantAPI.Authorization;
@@ -16,10 +15,15 @@ public class MinAgeRequirementHandler : AuthorizationHandler<MinAgeRequirement>
     protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, 
                                                    MinAgeRequirement requirement)
     {
-        var dateOfBirthClaimValue = context.User.FindFirst(c => c.Type == "DateOfBirth")?.Value;
-        var userEmailClaimValue = context.User.FindFirst(c => c.Type == ClaimTypes.Name)?.Value;
+        var dateOfBirthClaimValue = context.User
+            .FindFirst(c => c.Type == "DateOfBirth")
+            ?.Value;
+        
+        var userEmailClaimValue = context.User
+            .FindFirst(c => c.Type == ClaimTypes.Name)
+            ?.Value;
 
-        _logger.LogInformation($"User: { userEmailClaimValue } with date of birth: [{dateOfBirthClaimValue}]");
+        _logger.LogInformation($"User: { userEmailClaimValue } with date of birth: [{ dateOfBirthClaimValue }]");
 
         if (string.IsNullOrEmpty(dateOfBirthClaimValue))
         {

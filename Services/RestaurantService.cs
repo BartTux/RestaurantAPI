@@ -42,7 +42,6 @@ public class RestaurantService : IRestaurantService
             throw new NotFoundException("Restaurant not found...");
 
         var restaurantDtos = _mapper.Map<List<RestaurantDto>>(restaurants);
-
         return restaurantDtos;
     }
 

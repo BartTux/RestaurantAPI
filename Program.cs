@@ -65,11 +65,16 @@ builder.Services.AddAuthorization(options =>
 
     // Customowa polityka autoryzacji z w³asn¹ logik¹ (czy user ma skoñczone 20 lat)
     options.AddPolicy("AtLeast20", builder => builder.AddRequirements(new MinAgeRequirement(20)));
+    
+    options.AddPolicy("AtLeast2RestaurantsCreated", builder => 
+        builder.AddRequirements(new MinimumRestaurantsCreatedRequirement(2))
+    );
 });
 
 // Add services for policy handlers
 builder.Services.AddScoped<IAuthorizationHandler, MinAgeRequirementHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, ResourceOperationRequirementHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, MinimumRestaurantsCreatedRequirementHandler>();
 
 // Add services to the container.
 builder.Services.AddControllers();

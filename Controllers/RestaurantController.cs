@@ -19,9 +19,9 @@ public class RestaurantController : ControllerBase
     
     [HttpGet]
     [Authorize(Policy = "AtLeast2RestaurantsCreated")]
-    public ActionResult<IEnumerable<RestaurantDto>> GetAll()
+    public ActionResult<PageResponse<RestaurantDto>> GetAll([FromQuery] RestaurantQuery query)
     {
-        var restaurants = _restaurantService.GetAll();
+        var restaurants = _restaurantService.GetAll(query);
         return Ok(restaurants);
     }
 

@@ -5,23 +5,15 @@ namespace RestaurantAPI.Models.Validators;
 
 public class RegisterUserDtoValidator : AbstractValidator<RegisterUserDto>
 {
-	private readonly RestaurantDbContext _dbContext;
-
-	public RegisterUserDtoValidator(RestaurantDbContext restaurantDbContext)
-	{
-        _dbContext = restaurantDbContext;
-		CreateRules();
-	}
-
-	private void CreateRules()
+	public RegisterUserDtoValidator(RestaurantDbContext dbContext)
 	{
         RuleFor(x => x.Email)
             .NotNull()
             .NotEmpty()
             .EmailAddress()
-            .Custom((value, context) => 
+            .Custom((value, context) =>
             {
-                var isEmailInUse = _dbContext.Users.Any(x => x.Email == value);
+                var isEmailInUse = dbContext.Users.Any(x => x.Email == value);
 
                 if (isEmailInUse)
                     context.AddFailure("Email", "This e-mail address is already taken");

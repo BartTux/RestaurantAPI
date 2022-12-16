@@ -65,11 +65,9 @@ public class RestaurantService : IRestaurantService
         var restaurants = baseQuery
             .Skip(query.PageSize * (query.PageNumber - 1))
             .Take(query.PageSize)
-            .ToList();
-
-        if (restaurants is null)
-            throw new NotFoundException("Restaurant not found...");
-
+            .ToList()
+            ?? throw new NotFoundException("Restaurant not found...");
+            
         var restaurantDtos = _mapper.Map<List<RestaurantDto>>(restaurants);
 
         var restaurantResults = new PageResponse<RestaurantDto>(
@@ -88,13 +86,10 @@ public class RestaurantService : IRestaurantService
             .Restaurants
             .Include(r => r.Address)
             .Include(r => r.Dishes)
-            .FirstOrDefault(r => r.Id == id);
-
-        if (restaurant is null)
-            throw new NotFoundException("Restaurant not found...");
+            .FirstOrDefault(r => r.Id == id)
+            ?? throw new NotFoundException("Restaurant not found...");
 
         var restaurantDto = _mapper.Map<RestaurantDto>(restaurant);
-        
         return restaurantDto;
     }
 
@@ -113,16 +108,14 @@ public class RestaurantService : IRestaurantService
     {
         var restaurant = _dbContext
             .Restaurants
-            .FirstOrDefault(r => r.Id == id);
-
-        if (restaurant is null)
-            throw new NotFoundException("Restaurant not found...");
+            .FirstOrDefault(r => r.Id == id)
+            ?? throw new NotFoundException("Restaurant not found...");
 
         var authorizationResult = _authorizationService.AuthorizeAsync(
             _userContextService.User,
             restaurant,
             new ResourceOperationRequirement(ResourceOperation.Update)
-        ).Result;
+            ).Result;
 
         if (!authorizationResult.Succeeded)
             throw new ForbidException();
@@ -137,10 +130,8 @@ public class RestaurantService : IRestaurantService
 
         var restaurant = _dbContext
             .Restaurants
-            .FirstOrDefault(r => r.Id == id);
-
-        if (restaurant is null)
-            throw new NotFoundException("Restaurant not found");
+            .FirstOrDefault(r => r.Id == id)
+            ?? throw new NotFoundException("Restaurant not found");
 
         var authorizationResult = _authorizationService.AuthorizeAsync(
             _userContextService.User,

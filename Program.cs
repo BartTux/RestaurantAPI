@@ -105,9 +105,24 @@ builder.Services.AddScoped<IUserContextService, UserContextService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSwaggerGen();
 
+// Add CORS Policy for frontend application
+builder.Services.AddCors(options => 
+{
+    options.AddPolicy("RestaurantFrontEndClient", policyBuilder =>
+    {
+        policyBuilder
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .WithOrigins(builder.Configuration["AllowedOrigins"]);
+    });
+});
+
 
 var app = builder.Build();
 var scope = app.Services.CreateScope();
+
+// Use CORS for RestaurantFrontEndClient
+app.UseCors("RestaurantFrontEndClient");
 
 var seeder = scope.ServiceProvider.GetRequiredService<RestaurantSeeder>();
 seeder.Seed();

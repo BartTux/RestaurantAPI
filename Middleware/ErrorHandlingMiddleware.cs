@@ -25,7 +25,7 @@ public class ErrorHandlingMiddleware : IMiddleware
 		{
             await ReturnResponse(context, StatusCodes.Status400BadRequest, ex.Message);
         }
-		catch (ForbidException)
+		catch (ForbidException ex)
 		{
 			context.Response.StatusCode = StatusCodes.Status403Forbidden;
 		}
@@ -33,8 +33,7 @@ public class ErrorHandlingMiddleware : IMiddleware
 		{
 			_logger.LogError(ex, ex.Message);
 
-            // Internal Server Error
-            await ReturnResponse(context, 500, "Something went wrong...");
+            await ReturnResponse(context, StatusCodes.Status500InternalServerError, "Something went wrong...");
         }
     }
 

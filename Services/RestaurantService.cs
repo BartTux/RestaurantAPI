@@ -38,11 +38,10 @@ public class RestaurantService : IRestaurantService
             .Include(r => r.Address)
             .Include(r => r.Dishes)
             .Where(r => query.SearchPhraze == null
-                || (r.Name.ToLower().Contains(query.SearchPhraze.ToLower())
+                || r.Name.ToLower().Contains(query.SearchPhraze.ToLower())
                 || r.Description.ToLower().Contains(query.SearchPhraze.ToLower())
                 || r.Dishes.Any(d => d.Name.ToLower().Contains(query.SearchPhraze.ToLower()))
-                || r.Address.City.ToLower().Contains(query.SearchPhraze.ToLower()))
-            );
+                || r.Address.City.ToLower().Contains(query.SearchPhraze.ToLower()));
 
         if (!string.IsNullOrEmpty(query.SortBy))
         {
@@ -74,8 +73,7 @@ public class RestaurantService : IRestaurantService
             restaurantDtos,
             baseQuery.Count(),
             query.PageSize, 
-            query.PageNumber
-        );
+            query.PageNumber);
 
         return restaurantResults;
     }
@@ -114,8 +112,8 @@ public class RestaurantService : IRestaurantService
         var authorizationResult = _authorizationService.AuthorizeAsync(
             _userContextService.User,
             restaurant,
-            new ResourceOperationRequirement(ResourceOperation.Update)
-            ).Result;
+            new ResourceOperationRequirement(ResourceOperation.Update))
+            .Result;
 
         if (!authorizationResult.Succeeded)
             throw new ForbidException();
@@ -136,8 +134,8 @@ public class RestaurantService : IRestaurantService
         var authorizationResult = _authorizationService.AuthorizeAsync(
             _userContextService.User,
             restaurant,
-            new ResourceOperationRequirement(ResourceOperation.Delete)
-        ).Result;
+            new ResourceOperationRequirement(ResourceOperation.Delete))
+            .Result;
 
         if (!authorizationResult.Succeeded)
             throw new ForbidException();

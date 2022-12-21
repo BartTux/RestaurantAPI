@@ -4,6 +4,6 @@ namespace RestaurantAPI.Services.Contracts;
 
 public interface IAccountService
 {
-    string Login(LoginDto loginDto);
-    void RegisterUser(RegisterUserDto registerUserDto);
+    Task<string> LoginAsync(LoginDto loginDto);
+    Task RegisterUserAsync(RegisterUserDto registerUserDto);
 }

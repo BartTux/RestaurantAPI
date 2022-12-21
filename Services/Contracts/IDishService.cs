@@ -5,10 +5,10 @@ namespace RestaurantAPI.Services.Contracts
 {
     public interface IDishService
     {
-        IEnumerable<DishDto> GetAll(int restaurantId);
-        DishDto Get(int restaurantId, int dishId);
-        int Create(int restaurantId, CreateDishDto dto);
-        void Delete(int restaurantId, int dishId);
-        void DeleteAll(int restaurantId);
+        Task<IEnumerable<DishDto>> GetAllAsync(int restaurantId);
+        Task<DishDto> GetAsync(int restaurantId, int dishId);
+        Task<int> CreateAsync(int restaurantId, CreateDishDto dto);
+        Task DeleteAsync(int restaurantId, int dishId);
+        Task DeleteAllAsync(int restaurantId);
     }
 }

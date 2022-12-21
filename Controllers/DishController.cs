@@ -16,37 +16,40 @@ public class DishController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<DishDto>> GetAll([FromRoute] int restaurantId) 
+    public async Task<ActionResult<IEnumerable<DishDto>>> GetAll([FromRoute] int restaurantId)
     {
-        var dishes = _dishService.GetAll(restaurantId);
+        var dishes = await _dishService.GetAllAsync(restaurantId);
         return Ok(dishes);
     }
 
     [HttpGet("{dishId}")]
-    public ActionResult<DishDto> Get([FromRoute] int restaurantId, [FromRoute] int dishId)
+    public async Task<ActionResult<DishDto>> Get([FromRoute] int restaurantId,
+                                                 [FromRoute] int dishId)
     {
-        var dish = _dishService.Get(restaurantId, dishId);
+        var dish = await _dishService.GetAsync(restaurantId, dishId);
         return Ok(dish);
     }
 
     [HttpPost]
-    public IActionResult Create([FromRoute] int restaurantId, [FromBody] CreateDishDto dto)
+    public async Task<IActionResult> Create([FromRoute] int restaurantId,
+                                            [FromBody] CreateDishDto dto)
     {
-        var dishId = _dishService.Create(restaurantId, dto);
+        var dishId = await _dishService.CreateAsync(restaurantId, dto);
         return Created($"api/restaurant/{ restaurantId }/dish/{ dishId }", null);
     }
 
     [HttpDelete]
-    public IActionResult DeleteAll([FromRoute] int restaurantId)
+    public async Task<IActionResult> DeleteAll([FromRoute] int restaurantId)
     {
-        _dishService.DeleteAll(restaurantId);
+        await _dishService.DeleteAllAsync(restaurantId);
         return NoContent();
     }
 
     [HttpDelete("{dishId}")]
-    public IActionResult Delete([FromRoute] int restaurantId, [FromRoute] int dishId)
+    public async Task<IActionResult> Delete([FromRoute] int restaurantId,
+                                            [FromRoute] int dishId)
     {
-        _dishService.Delete(restaurantId, dishId);
+        await _dishService.DeleteAsync(restaurantId, dishId);
         return NoContent();
     }
 }

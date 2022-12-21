@@ -30,25 +30,22 @@ public class AccountService : IAccountService
         _dbContext = dbContext;
     }
 
-    public void RegisterUser(RegisterUserDto registerUserDto)
+    public async Task RegisterUserAsync(RegisterUserDto registerUserDto)
     {
         var user = _mapper.Map<User>(registerUserDto);
 
-        user.PasswordHash = _passwordHasher
-            .HashPassword(user, registerUserDto.Password);
+        user.PasswordHash = _passwordHasher.HashPassword(user, registerUserDto.Password);
 
-        _dbContext.Users.Add(user);
-        _dbContext.SaveChanges();
+        await _dbContext.Users.AddAsync(user);
+        await _dbContext.SaveChangesAsync();
     }
 
-    public string Login(LoginDto loginDto)
+    public async Task<string> LoginAsync(LoginDto loginDto)
     {
-        var user = _dbContext.Users
+        var user = await _dbContext.Users
             .Include(u => u.Role)
-            .FirstOrDefault(u => u.Email == loginDto.Email);
-
-        if (user is null)
-            throw new BadRequestException("Invalid username or password...");
+            .FirstOrDefaultAsync(u => u.Email == loginDto.Email)
+            ?? throw new BadRequestException("Invalid username or password...");
 
         var password = _passwordHasher
             .VerifyHashedPassword(user, user.PasswordHash, loginDto.Password);
@@ -68,20 +65,15 @@ public class AccountService : IAccountService
             new Claim(ClaimTypes.Role, user.Role.Name),
             new Claim("DateOfBirth", user.DateOfBirth is null 
                 ? string.Empty 
-                : user.DateOfBirth.Value.ToString("yyyy-MM-dd")
-            )
+                : user.DateOfBirth.Value.ToString("yyyy-MM-dd"))
         };
 
         if (!string.IsNullOrEmpty(user.Nationality))
-        {
-            claims.Add(
-                new Claim("Nationality", user.Nationality)
-            );
-        }
+            claims.Add(new Claim("Nationality", user.Nationality));
 
         var key = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(_authenticationSettings.JwtKey)
-        );
+            Encoding.UTF8.GetBytes(_authenticationSettings.JwtKey));
+
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
         var expires = DateTime.Now.AddDays(_authenticationSettings.JwtExpireDays);
 
@@ -90,8 +82,7 @@ public class AccountService : IAccountService
             _authenticationSettings.JwtIssuer,
             claims,
             expires: expires,
-            signingCredentials: credentials
-        );
+            signingCredentials: credentials);
 
         var tokenHandler = new JwtSecurityTokenHandler();
         return tokenHandler.WriteToken(token);

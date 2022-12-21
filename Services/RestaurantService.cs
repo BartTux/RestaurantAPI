@@ -93,7 +93,7 @@ public class RestaurantService : IRestaurantService
 
     public async Task<Restaurant> CreateAsync(CreateRestaurantDto createRestaurantDto)
     {
-        var restaurant = await Task.Run(() => _mapper.Map<Restaurant>(createRestaurantDto));
+        var restaurant = _mapper.Map<Restaurant>(createRestaurantDto);
         restaurant.CreatedById = _userContextService.UserId;
 
         _dbContext.Restaurants.Add(restaurant);

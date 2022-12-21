@@ -5,8 +5,8 @@ using RestaurantAPI.Services.Contracts;
 
 namespace RestaurantAPI.Controllers;
 
-[Route("api/restaurant")]
 [ApiController]
+[Route("api/restaurant")]
 [Authorize]
 public class RestaurantController : ControllerBase
 {
@@ -19,40 +19,41 @@ public class RestaurantController : ControllerBase
     
     [HttpGet]
     [Authorize(Policy = "AtLeast2RestaurantsCreated")]
-    public ActionResult<PageResponse<RestaurantDto>> GetAll([FromQuery] RestaurantQuery query)
+    public async Task<ActionResult<PageResponse<RestaurantDto>>> GetAll(
+        [FromQuery] RestaurantQuery query)
     {
-        var restaurants = _restaurantService.GetAll(query);
+        var restaurants = await _restaurantService.GetAllAsync(query);
         return Ok(restaurants);
     }
 
     [HttpGet("{id}")]
     [Authorize(Policy = "HasNationality")]
-    public ActionResult<RestaurantDto> Get([FromRoute] int id)
+    public async Task<ActionResult<RestaurantDto>> Get([FromRoute] int id)
     {
-        var restaurant = _restaurantService.GetById(id);
+        var restaurant = await _restaurantService.GetByIdAsync(id);
         return Ok(restaurant);
     }
 
     [HttpPost]
     [Authorize(Roles = "Admin,Manager")]
-    public IActionResult Create([FromBody] CreateRestaurantDto createRestaurantDto)
+    public async Task<IActionResult> Create([FromBody] CreateRestaurantDto createRestaurantDto)
     {
-        var restaurant = _restaurantService.Create(createRestaurantDto);
+        var restaurant = await _restaurantService.CreateAsync(createRestaurantDto);
         return Created($"api/restaurant/{ restaurant.Id }", null);
     }
 
     [HttpDelete("{id}")]
-    public IActionResult Delete([FromRoute] int id)
+    public async Task<IActionResult> Delete([FromRoute] int id)
     {
-        _restaurantService.Delete(id);
+        await _restaurantService.DeleteAsync(id);
         return NoContent();
     }
     
     [HttpPut("{id}")]
-    public IActionResult Update([FromRoute] int id, 
-                                [FromBody] ModifyRestaurantDto modifyRestaurantDto)
+    public async Task<IActionResult> Update([FromRoute] int id, 
+                                            [FromBody] ModifyRestaurantDto modifyRestaurantDto)
     {
-        _restaurantService.Update(id, modifyRestaurantDto);
+        await _restaurantService.UpdateAsync(id, modifyRestaurantDto);
         return NoContent();
     }
 }

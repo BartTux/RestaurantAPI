@@ -31,7 +31,7 @@ public class RestaurantService : IRestaurantService
         _dbContext = dbContext;
     }
 
-    public PageResponse<RestaurantDto> GetAll(RestaurantQuery query)
+    public async Task<PageResponse<RestaurantDto>> GetAllAsync(RestaurantQuery query)
     {
         var baseQuery = _dbContext
             .Restaurants
@@ -61,10 +61,10 @@ public class RestaurantService : IRestaurantService
                 : baseQuery.OrderByDescending(selectedColumn);
         }
 
-        var restaurants = baseQuery
+        var restaurants = await baseQuery
             .Skip(query.PageSize * (query.PageNumber - 1))
             .Take(query.PageSize)
-            .ToList()
+            .ToListAsync()
             ?? throw new NotFoundException("Restaurant not found...");
             
         var restaurantDtos = _mapper.Map<List<RestaurantDto>>(restaurants);
@@ -78,35 +78,35 @@ public class RestaurantService : IRestaurantService
         return restaurantResults;
     }
 
-    public RestaurantDto GetById(int id)
+    public async Task<RestaurantDto> GetByIdAsync(int id)
     {
-        var restaurant = _dbContext
+        var restaurant = await _dbContext
             .Restaurants
             .Include(r => r.Address)
             .Include(r => r.Dishes)
-            .FirstOrDefault(r => r.Id == id)
+            .FirstOrDefaultAsync(r => r.Id == id)
             ?? throw new NotFoundException("Restaurant not found...");
 
         var restaurantDto = _mapper.Map<RestaurantDto>(restaurant);
         return restaurantDto;
     }
 
-    public Restaurant Create(CreateRestaurantDto createRestaurantDto)
+    public async Task<Restaurant> CreateAsync(CreateRestaurantDto createRestaurantDto)
     {
-        var restaurant = _mapper.Map<Restaurant>(createRestaurantDto);
+        var restaurant = await Task.Run(() => _mapper.Map<Restaurant>(createRestaurantDto));
         restaurant.CreatedById = _userContextService.UserId;
 
         _dbContext.Restaurants.Add(restaurant);
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync();
 
         return restaurant;
     }
 
-    public void Update(int id, ModifyRestaurantDto modifyRestaurantDto)
+    public async Task UpdateAsync(int id, ModifyRestaurantDto modifyRestaurantDto)
     {
-        var restaurant = _dbContext
+        var restaurant = await _dbContext
             .Restaurants
-            .FirstOrDefault(r => r.Id == id)
+            .FirstOrDefaultAsync(r => r.Id == id)
             ?? throw new NotFoundException("Restaurant not found...");
 
         var authorizationResult = _authorizationService.AuthorizeAsync(
@@ -115,32 +115,31 @@ public class RestaurantService : IRestaurantService
             new ResourceOperationRequirement(ResourceOperation.Update))
             .Result;
 
-        if (!authorizationResult.Succeeded)
+        if (!authorizationResult.Succeeded) 
             throw new ForbidException();
 
         _mapper.Map(modifyRestaurantDto, restaurant);
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync();
     }
 
-    public void Delete(int id)
+    public async Task DeleteAsync(int id)
     {
         _logger.LogError($"Restaurant with id: { id } DELETE action invoked");
 
-        var restaurant = _dbContext
+        var restaurant = await _dbContext
             .Restaurants
-            .FirstOrDefault(r => r.Id == id)
+            .FirstOrDefaultAsync(r => r.Id == id)
             ?? throw new NotFoundException("Restaurant not found");
 
         var authorizationResult = _authorizationService.AuthorizeAsync(
             _userContextService.User,
             restaurant,
-            new ResourceOperationRequirement(ResourceOperation.Delete))
-            .Result;
+            new ResourceOperationRequirement(ResourceOperation.Delete)).Result;
 
         if (!authorizationResult.Succeeded)
             throw new ForbidException();
 
         _dbContext.Restaurants.Remove(restaurant);
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync();
     }
 }

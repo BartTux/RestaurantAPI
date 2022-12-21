@@ -26,22 +26,25 @@ builder.Configuration
 
 builder.Services.AddSingleton(authenticationSettings);
 
-builder.Services.AddAuthentication(option =>
-{
-    option.DefaultAuthenticateScheme = "Bearer";
-    option.DefaultScheme = "Bearer";
-    option.DefaultChallengeScheme = "Bearer";
-}).AddJwtBearer(cfg =>
-{
-    cfg.RequireHttpsMetadata = false;
-    cfg.SaveToken = true;
-    cfg.TokenValidationParameters = new TokenValidationParameters
+builder.Services
+    .AddAuthentication(option => 
     {
-        ValidIssuer = authenticationSettings.JwtIssuer,
-        ValidAudience = authenticationSettings.JwtIssuer,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.JwtKey))
-    };
-});
+        option.DefaultAuthenticateScheme = "Bearer";
+        option.DefaultScheme = "Bearer";
+        option.DefaultChallengeScheme = "Bearer";
+    })
+    .AddJwtBearer(cfg => 
+    {
+        cfg.RequireHttpsMetadata = false;
+        cfg.SaveToken = true;
+        cfg.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidIssuer = authenticationSettings.JwtIssuer,
+            ValidAudience = authenticationSettings.JwtIssuer,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(authenticationSettings.JwtKey))
+        };
+    });
 
 // NLog: Setup NLog for DI
 builder.Logging.ClearProviders();
@@ -61,14 +64,14 @@ builder.Services.AddAuthorization(options =>
 
     // Tutaj wymagamy istnienia claimu Nationality Z wymaganiami dot. wartoœci tego claimu -
     // on ma istnieæ i mieæ wartoœci podane jako params drugiego argumentu metody RequireClaim (tutaj "Polish" i "German")
-    options.AddPolicy("HasNationality", builder => builder.RequireClaim("Nationality", "Polish", "German"));
+    options.AddPolicy("HasNationality", builder 
+        => builder.RequireClaim("Nationality", "Polish", "German"));
 
     // Customowa polityka autoryzacji z w³asn¹ logik¹ (czy user ma skoñczone 20 lat)
     options.AddPolicy("AtLeast20", builder => builder.AddRequirements(new MinAgeRequirement(20)));
     
     options.AddPolicy("AtLeast2RestaurantsCreated", builder => 
-        builder.AddRequirements(new MinimumRestaurantsCreatedRequirement(2))
-    );
+        builder.AddRequirements(new MinimumRestaurantsCreatedRequirement(2)));
 });
 
 // Add services for policy handlers
@@ -108,7 +111,7 @@ builder.Services.AddSwaggerGen();
 // Add CORS Policy for frontend application
 builder.Services.AddCors(options => 
 {
-    options.AddPolicy("RestaurantFrontEndClient", policyBuilder =>
+    options.AddPolicy("RestaurantFrontEndClient", policyBuilder => 
     {
         policyBuilder
             .AllowAnyMethod()
@@ -142,9 +145,5 @@ app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Restaurant 
 //app.UseRouting();
 app.UseAuthorization();
 
-//app.UseEndpoints(endpoints => 
-//{ 
-    app.MapControllers();
-//});
-
+app.MapControllers();
 app.Run();

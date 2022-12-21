@@ -61,17 +61,18 @@ public class RestaurantService : IRestaurantService
                 : baseQuery.OrderByDescending(selectedColumn);
         }
 
+        var recordsNumber = await baseQuery.CountAsync();
         var restaurants = await baseQuery
             .Skip(query.PageSize * (query.PageNumber - 1))
             .Take(query.PageSize)
             .ToListAsync()
             ?? throw new NotFoundException("Restaurant not found...");
-            
+
         var restaurantDtos = _mapper.Map<List<RestaurantDto>>(restaurants);
 
         var restaurantResults = new PageResponse<RestaurantDto>(
             restaurantDtos,
-            baseQuery.Count(),
+            recordsNumber,
             query.PageSize, 
             query.PageNumber);
 

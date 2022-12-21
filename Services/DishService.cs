@@ -71,7 +71,7 @@ public class DishService : IDishService
 
         var restaurant = await GetRestaurantByIdAsync(restaurantId);
         var dish = GetDishById(restaurant, dishId);
-
+        
         restaurant.Dishes.Remove(dish);
         await _dbContext.SaveChangesAsync();
     }
@@ -82,7 +82,7 @@ public class DishService : IDishService
             .FirstOrDefaultAsync(r => r.Id == restaurantId)
             ?? throw new NotFoundException("Restaurant not found...");
     
-    private Dish GetDishById(Restaurant restaurant, int dishId)
+    private Dish GetDishById(Restaurant restaurant, int dishId) 
         => restaurant.Dishes
             .FirstOrDefault(d => d.Id == dishId)
             ?? throw new NotFoundException("Dish not found...");

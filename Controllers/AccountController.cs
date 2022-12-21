@@ -16,16 +16,16 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("register")]
-    public IActionResult RegisterUser([FromBody] RegisterUserDto registerUserDto)
+    public async Task<IActionResult> RegisterUser([FromBody] RegisterUserDto registerUserDto)
     {
-        _accountService.RegisterUser(registerUserDto);
+        await _accountService.RegisterUserAsync(registerUserDto);
         return Ok();
     }
 
     [HttpPost("login")]
-    public IActionResult Login([FromBody] LoginDto loginDto)
+    public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
     {
-        var token = _accountService.Login(loginDto);
+        var token = await _accountService.LoginAsync(loginDto);
         return Ok(token);
     }
 }

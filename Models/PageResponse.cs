@@ -2,13 +2,13 @@
 
 public class PageResponse<TResponse>
 {
-    public List<TResponse> Items { get; set; }
+    public IEnumerable<TResponse> Items { get; set; }
     public int TotalPages { get; set; }
     public int ItemsFrom { get; set; }
     public int ItemsTo { get; set; }
     public int TotalItemsCount { get; set; }
 
-    public PageResponse(List<TResponse> items,
+    public PageResponse(IEnumerable<TResponse> items,
                         int totalItemsCount,
                         int pageSize,
                         int pageNumber)

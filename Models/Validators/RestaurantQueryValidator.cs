@@ -21,7 +21,7 @@ public class RestaurantQueryValidator : AbstractValidator<RestaurantQuery>
 		RuleFor(r => r.PageNumber)
 			.GreaterThanOrEqualTo(1);
 
-		RuleFor(r => r.PageSize).Custom((value, context) =>
+		RuleFor(r => r.PageSize).Custom((value, context) => 
 		{
 			if (!_allowedPageSizes.Contains(value))
 				context.AddFailure("PageSize", $"PageSize must be in [{ string.Join(", ", _allowedPageSizes) }]");

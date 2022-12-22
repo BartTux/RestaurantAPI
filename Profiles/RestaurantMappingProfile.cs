@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.Internal.Mappers;
 using RestaurantAPI.Entities;
 using RestaurantAPI.Models;
 
@@ -13,7 +14,7 @@ public class RestaurantMappingProfile : Profile
 			.ForMember(m => m.Street, c => c.MapFrom(s => s.Address.Street))
 			.ForMember(m => m.PostalCode, c => c.MapFrom(p => p.Address.PostalCode));
 
-		CreateMap<Dish, DishDto>();
+        CreateMap<Dish, DishDto>();
 
 		CreateMap<CreateRestaurantDto, Restaurant>()
 			.ForMember(r => r.Address, c => c.MapFrom(dto => new Address 
@@ -23,12 +24,12 @@ public class RestaurantMappingProfile : Profile
 				PostalCode = dto.PostalCode
 			}));
 
-		CreateMap<ModifyRestaurantDto, Restaurant>();
+        CreateMap<bool?, bool>().ConvertUsing((src, dest) => src ?? dest);
+        CreateMap<ModifyRestaurantDto, Restaurant>()
+			.ForAllMembers(opts => opts.Condition((src, dest, value) => value is not null));
 
 		CreateMap<CreateDishDto, Dish>();
 
 		CreateMap<RegisterUserDto, User>();
-
-		//CreateMap<LoginDto, User>();
 	}
 }

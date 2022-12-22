@@ -4,9 +4,10 @@ namespace RestaurantAPI.Models;
 
 public class ModifyRestaurantDto
 {
-    [Required]
     [MaxLength(25)]
-    public string Name { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
-    public bool HasDelivery { get; set; }
+    public string? Name { get; set; }
+
+    [MaxLength(100)]
+    public string? Description { get; set; }
+    public bool? HasDelivery { get; set; }
 }

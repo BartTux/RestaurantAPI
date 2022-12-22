@@ -110,10 +110,11 @@ public class RestaurantService : IRestaurantService
             .FirstOrDefaultAsync(r => r.Id == id)
             ?? throw new NotFoundException("Restaurant not found...");
 
-        var authorizationResult = _authorizationService.AuthorizeAsync(
-            _userContextService.User,
-            restaurant,
-            new ResourceOperationRequirement(ResourceOperation.Update))
+        var authorizationResult = _authorizationService
+            .AuthorizeAsync(
+                _userContextService.User,
+                restaurant,
+                new ResourceOperationRequirement(ResourceOperation.Update))
             .Result;
 
         if (!authorizationResult.Succeeded) 
@@ -132,10 +133,12 @@ public class RestaurantService : IRestaurantService
             .FirstOrDefaultAsync(r => r.Id == id)
             ?? throw new NotFoundException("Restaurant not found");
 
-        var authorizationResult = _authorizationService.AuthorizeAsync(
-            _userContextService.User,
-            restaurant,
-            new ResourceOperationRequirement(ResourceOperation.Delete)).Result;
+        var authorizationResult = _authorizationService
+            .AuthorizeAsync(
+                _userContextService.User,
+                restaurant,
+                new ResourceOperationRequirement(ResourceOperation.Delete))
+            .Result;
 
         if (!authorizationResult.Succeeded)
             throw new ForbidException();

@@ -97,7 +97,7 @@ public class RestaurantService : IRestaurantService
         var restaurant = _mapper.Map<Restaurant>(createRestaurantDto);
         restaurant.CreatedById = _userContextService.UserId;
 
-        _dbContext.Restaurants.Add(restaurant);
+        await _dbContext.Restaurants.AddAsync(restaurant);
         await _dbContext.SaveChangesAsync();
 
         return restaurant;

@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using RestaurantAPI.Entities;
 
 namespace RestaurantAPI.Models.Validators;
@@ -11,9 +12,9 @@ public class RegisterUserDtoValidator : AbstractValidator<RegisterUserDto>
             .NotNull()
             .NotEmpty()
             .EmailAddress()
-            .Custom((value, context) =>
+            .CustomAsync(async (value, context, cancellationToken) =>
             {
-                var isEmailInUse = dbContext.Users.Any(x => x.Email == value);
+                var isEmailInUse = await dbContext.Users.AnyAsync(x => x.Email == value);
 
                 if (isEmailInUse)
                     context.AddFailure("Email", "This e-mail address is already taken");

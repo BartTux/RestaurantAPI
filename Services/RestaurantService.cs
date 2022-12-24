@@ -68,10 +68,29 @@ public class RestaurantService : IRestaurantService
             .ToListAsync()
             ?? throw new NotFoundException("Restaurant not found...");
 
-        var restaurantDtos = _mapper.Map<List<RestaurantDto>>(restaurants);
+        var restaurantsDto = restaurants.Select(r => new RestaurantDto
+        (
+            Id: r.Id,
+            Name: r.Name,
+            Description: r.Description,
+            Category: r.Category,
+            HasDelivery: r.HasDelivery,
+            City: r.Address.City,
+            Street: r.Address.Street,
+            PostalCode: r.Address.PostalCode,
+            Dishes: r.Dishes
+                .Select(d => new DishDto
+                {
+                    Id = d.Id,
+                    Name = d.Name,
+                    Description = d.Description,
+                    Price = d.Price
+                })
+                .ToList()
+        ));
 
         var restaurantResults = new PageResponse<RestaurantDto>(
-            restaurantDtos,
+            restaurantsDto,
             recordsNumber,
             query.PageSize, 
             query.PageNumber);
@@ -88,14 +107,48 @@ public class RestaurantService : IRestaurantService
             .FirstOrDefaultAsync(r => r.Id == id)
             ?? throw new NotFoundException("Restaurant not found...");
 
-        var restaurantDto = _mapper.Map<RestaurantDto>(restaurant);
+        var restaurantDto = new RestaurantDto
+        (
+            Id: restaurant.Id,
+            Name: restaurant.Name,
+            Description: restaurant.Description,
+            Category: restaurant.Category,
+            HasDelivery: restaurant.HasDelivery,
+            City: restaurant.Address.City,
+            Street: restaurant.Address.Street,
+            PostalCode: restaurant.Address.PostalCode,
+            Dishes: restaurant.Dishes
+                .Select(d => new DishDto
+                {
+                    Id = d.Id,
+                    Name = d.Name,
+                    Description = d.Description,
+                    Price = d.Price
+                })
+                .ToList()
+        );
+
         return restaurantDto;
     }
 
     public async Task<Restaurant> CreateAsync(CreateRestaurantDto createRestaurantDto)
     {
-        var restaurant = _mapper.Map<Restaurant>(createRestaurantDto);
-        restaurant.CreatedById = _userContextService.UserId;
+        var restaurant = new Restaurant
+        {
+            Name = createRestaurantDto.Name,
+            Description = createRestaurantDto.Description,
+            Category = createRestaurantDto.Category,
+            HasDelivery = createRestaurantDto.HasDelivery,
+            ContactEmail = createRestaurantDto.ContactEmail,
+            ContactNumber = createRestaurantDto.ContactNumber,
+            CreatedById = _userContextService.UserId, // where user context service is from?
+            Address = new Address
+            {
+                City = createRestaurantDto.City,
+                Street = createRestaurantDto.Street,
+                PostalCode = createRestaurantDto.PostalCode
+            }
+        };
 
         await _dbContext.Restaurants.AddAsync(restaurant);
         await _dbContext.SaveChangesAsync();
@@ -120,7 +173,24 @@ public class RestaurantService : IRestaurantService
         if (!authorizationResult.Succeeded) 
             throw new ForbidException();
 
-        _mapper.Map(modifyRestaurantDto, restaurant);
+        if(modifyRestaurantDto.Name is not null) 
+            restaurant.Name = modifyRestaurantDto.Name;
+
+        if(modifyRestaurantDto.Description is not null) 
+            restaurant.Description = modifyRestaurantDto.Description;
+
+        if(modifyRestaurantDto.Category is not null) 
+            restaurant.Category = modifyRestaurantDto.Category;
+
+        if(modifyRestaurantDto.HasDelivery is not null) 
+            restaurant.HasDelivery = (bool)modifyRestaurantDto.HasDelivery;
+
+        if(modifyRestaurantDto.ContactEmail is not null) 
+            restaurant.ContactEmail = modifyRestaurantDto.ContactEmail;
+
+        if(modifyRestaurantDto.ContactNumber is not null) 
+            restaurant.ContactNumber = modifyRestaurantDto.ContactNumber;
+
         await _dbContext.SaveChangesAsync();
     }
 

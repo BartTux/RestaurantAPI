@@ -1,18 +1,13 @@
-﻿using RestaurantAPI.Entities;
+﻿namespace RestaurantAPI.Models;
 
-namespace RestaurantAPI.Models;
+public record RestaurantDto(int Id,
+                            string Name,
+                            string? Description,
+                            string Category,
+                            bool HasDelivery,
 
-public class RestaurantDto
-{
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public string Category { get; set; }
-    public bool HasDelivery { get; set; }
+                            string City,
+                            string Street,
+                            string PostalCode,
 
-    public string City { get; set; }
-    public string Street { get; set; }
-    public string PostalCode { get; set; }
-
-    public List<DishDto> Dishes { get; set; }
-}
+                            List<DishDto> Dishes);

@@ -16,14 +16,14 @@ public class DishController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<DishDto>>> GetAll([FromRoute] int restaurantId)
+    public async Task<ActionResult<IEnumerable<DishDTO>>> GetAll([FromRoute] int restaurantId)
     {
         var dishes = await _dishService.GetAllAsync(restaurantId);
         return Ok(dishes);
     }
 
     [HttpGet("{dishId}")]
-    public async Task<ActionResult<DishDto>> Get([FromRoute] int restaurantId,
+    public async Task<ActionResult<DishDTO>> Get([FromRoute] int restaurantId,
                                                  [FromRoute] int dishId)
     {
         var dish = await _dishService.GetAsync(restaurantId, dishId);
@@ -32,7 +32,7 @@ public class DishController : ControllerBase
 
     [HttpPost]
     public async Task<IActionResult> Create([FromRoute] int restaurantId,
-                                            [FromBody] CreateDishDto dto)
+                                            [FromBody] CreateDishDTO dto)
     {
         var dishId = await _dishService.CreateAsync(restaurantId, dto);
         return Created($"api/restaurant/{ restaurantId }/dish/{ dishId }", null);

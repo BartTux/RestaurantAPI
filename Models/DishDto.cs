@@ -1,6 +1,6 @@
 ﻿namespace RestaurantAPI.Models;
 
-public class DishDto
+public class DishDTO
 {
     public int Id { get; set; }
     public string Name { get; set; }

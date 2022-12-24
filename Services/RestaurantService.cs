@@ -12,26 +12,23 @@ namespace RestaurantAPI.Services;
 
 public class RestaurantService : IRestaurantService
 {
-    private readonly IMapper _mapper;
     private readonly ILogger<RestaurantService> _logger;
     private readonly IAuthorizationService _authorizationService;
     private readonly IUserContextService _userContextService;
     private readonly RestaurantDbContext _dbContext;
 
-    public RestaurantService(IMapper mapper,
-                             ILogger<RestaurantService> logger,
+    public RestaurantService(ILogger<RestaurantService> logger,
                              IAuthorizationService authorizationService,
                              IUserContextService userContextService,
                              RestaurantDbContext dbContext)
     {
-        _mapper = mapper;
         _logger = logger;
         _authorizationService = authorizationService;
         _userContextService = userContextService;
         _dbContext = dbContext;
     }
 
-    public async Task<PageResponse<RestaurantDto>> GetAllAsync(RestaurantQuery query)
+    public async Task<PageResponse<RestaurantDTO>> GetAllAsync(RestaurantQuery query)
     {
         var baseQuery = _dbContext
             .Restaurants
@@ -68,7 +65,7 @@ public class RestaurantService : IRestaurantService
             .ToListAsync()
             ?? throw new NotFoundException("Restaurant not found...");
 
-        var restaurantsDto = restaurants.Select(r => new RestaurantDto
+        var restaurantsDto = restaurants.Select(r => new RestaurantDTO
         (
             Id: r.Id,
             Name: r.Name,
@@ -79,7 +76,7 @@ public class RestaurantService : IRestaurantService
             Street: r.Address.Street,
             PostalCode: r.Address.PostalCode,
             Dishes: r.Dishes
-                .Select(d => new DishDto
+                .Select(d => new DishDTO
                 {
                     Id = d.Id,
                     Name = d.Name,
@@ -89,7 +86,7 @@ public class RestaurantService : IRestaurantService
                 .ToList()
         ));
 
-        var restaurantResults = new PageResponse<RestaurantDto>(
+        var restaurantResults = new PageResponse<RestaurantDTO>(
             restaurantsDto,
             recordsNumber,
             query.PageSize, 
@@ -98,7 +95,7 @@ public class RestaurantService : IRestaurantService
         return restaurantResults;
     }
 
-    public async Task<RestaurantDto> GetByIdAsync(int id)
+    public async Task<RestaurantDTO> GetByIdAsync(int id)
     {
         var restaurant = await _dbContext
             .Restaurants
@@ -107,7 +104,7 @@ public class RestaurantService : IRestaurantService
             .FirstOrDefaultAsync(r => r.Id == id)
             ?? throw new NotFoundException("Restaurant not found...");
 
-        var restaurantDto = new RestaurantDto
+        var restaurantDto = new RestaurantDTO
         (
             Id: restaurant.Id,
             Name: restaurant.Name,
@@ -118,7 +115,7 @@ public class RestaurantService : IRestaurantService
             Street: restaurant.Address.Street,
             PostalCode: restaurant.Address.PostalCode,
             Dishes: restaurant.Dishes
-                .Select(d => new DishDto
+                .Select(d => new DishDTO
                 {
                     Id = d.Id,
                     Name = d.Name,
@@ -131,7 +128,7 @@ public class RestaurantService : IRestaurantService
         return restaurantDto;
     }
 
-    public async Task<Restaurant> CreateAsync(CreateRestaurantDto createRestaurantDto)
+    public async Task<Restaurant> CreateAsync(CreateRestaurantDTO createRestaurantDto)
     {
         var restaurant = new Restaurant
         {
@@ -156,7 +153,7 @@ public class RestaurantService : IRestaurantService
         return restaurant;
     }
 
-    public async Task UpdateAsync(int id, ModifyRestaurantDto modifyRestaurantDto)
+    public async Task UpdateAsync(int id, ModifyRestaurantDTO modifyRestaurantDto)
     {
         var restaurant = await _dbContext
             .Restaurants

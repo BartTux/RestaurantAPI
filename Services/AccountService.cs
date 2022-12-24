@@ -30,7 +30,7 @@ public class AccountService : IAccountService
         _dbContext = dbContext;
     }
 
-    public async Task RegisterUserAsync(RegisterUserDto registerUserDto)
+    public async Task RegisterUserAsync(RegisterUserDTO registerUserDto)
     {
         var user = _mapper.Map<User>(registerUserDto);
 
@@ -40,7 +40,7 @@ public class AccountService : IAccountService
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task<string> LoginAsync(LoginDto loginDto)
+    public async Task<string> LoginAsync(LoginDTO loginDto)
     {
         var user = await _dbContext.Users
             .Include(u => u.Role)

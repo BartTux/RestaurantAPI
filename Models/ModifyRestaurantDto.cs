@@ -1,6 +1,6 @@
 ﻿namespace RestaurantAPI.Models;
 
-public record ModifyRestaurantDto(string? Name,
+public record ModifyRestaurantDTO(string? Name,
                                   string? Description,
                                   string? Category,
                                   bool? HasDelivery,

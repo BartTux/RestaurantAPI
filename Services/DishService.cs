@@ -22,25 +22,25 @@ public class DishService : IDishService
         _dbContext = dbContext;
     }
 
-    public async Task<IEnumerable<DishDto>> GetAllAsync(int restaurantId)
+    public async Task<IEnumerable<DishDTO>> GetAllAsync(int restaurantId)
     {
         var restaurant = await GetRestaurantByIdAsync(restaurantId);
 
-        var dishDtos = _mapper.Map<List<DishDto>>(restaurant.Dishes);
-        return dishDtos;
+        var dishesDto = _mapper.Map<List<DishDTO>>(restaurant.Dishes);
+        return dishesDto;
     }
 
-    public async Task<DishDto> GetAsync(int restaurantId, int dishId)
+    public async Task<DishDTO> GetAsync(int restaurantId, int dishId)
     {
         var restaurant = await GetRestaurantByIdAsync(restaurantId);
         var dish = GetDishById(restaurant, dishId);
 
-        var dishDto = _mapper.Map<DishDto>(dish);
+        var dishDto = _mapper.Map<DishDTO>(dish);
 
         return dishDto;
     }
 
-    public async Task<int> CreateAsync(int restaurantId, CreateDishDto createDishDto)
+    public async Task<int> CreateAsync(int restaurantId, CreateDishDTO createDishDto)
     {
         var restaurant = await GetRestaurantByIdAsync(restaurantId);
         var dish = _mapper.Map<Dish>(createDishDto);

@@ -19,7 +19,7 @@ public class RestaurantController : ControllerBase
     
     [HttpGet]
     [Authorize(Policy = "AtLeast2RestaurantsCreated")]
-    public async Task<ActionResult<PageResponse<RestaurantDto>>> GetAll(
+    public async Task<ActionResult<PageResponse<RestaurantDTO>>> GetAll(
         [FromQuery] RestaurantQuery query)
     {
         var restaurants = await _restaurantService.GetAllAsync(query);
@@ -28,7 +28,7 @@ public class RestaurantController : ControllerBase
 
     [HttpGet("{id}")]
     [Authorize(Policy = "HasNationality")]
-    public async Task<ActionResult<RestaurantDto>> Get([FromRoute] int id)
+    public async Task<ActionResult<RestaurantDTO>> Get([FromRoute] int id)
     {
         var restaurant = await _restaurantService.GetByIdAsync(id);
         return Ok(restaurant);
@@ -36,7 +36,7 @@ public class RestaurantController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = "Admin,Manager")]
-    public async Task<IActionResult> Create([FromBody] CreateRestaurantDto createRestaurantDto)
+    public async Task<IActionResult> Create([FromBody] CreateRestaurantDTO createRestaurantDto)
     {
         var restaurant = await _restaurantService.CreateAsync(createRestaurantDto);
         return Created($"api/restaurant/{ restaurant.Id }", null);
@@ -51,7 +51,7 @@ public class RestaurantController : ControllerBase
     
     [HttpPut("{id}")]
     public async Task<IActionResult> Update([FromRoute] int id, 
-                                            [FromBody] ModifyRestaurantDto modifyRestaurantDto)
+                                            [FromBody] ModifyRestaurantDTO modifyRestaurantDto)
     {
         await _restaurantService.UpdateAsync(id, modifyRestaurantDto);
         return NoContent();

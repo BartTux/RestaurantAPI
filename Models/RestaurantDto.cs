@@ -1,6 +1,6 @@
 ﻿namespace RestaurantAPI.Models;
 
-public record RestaurantDto(int Id,
+public record RestaurantDTO(int Id,
                             string Name,
                             string? Description,
                             string Category,
@@ -10,4 +10,4 @@ public record RestaurantDto(int Id,
                             string Street,
                             string PostalCode,
 
-                            List<DishDto> Dishes);
+                            List<DishDTO> Dishes);

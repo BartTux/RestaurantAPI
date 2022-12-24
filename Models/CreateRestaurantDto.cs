@@ -1,6 +1,6 @@
 ﻿namespace RestaurantAPI.Models;
 
-public record CreateRestaurantDto(string Name,
+public record CreateRestaurantDTO(string Name,
                                   string? Description,
                                   string Category,
                                   bool HasDelivery,

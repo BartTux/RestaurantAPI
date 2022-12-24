@@ -2,7 +2,7 @@
 
 namespace RestaurantAPI.Models;
 
-public class CreateDishDto
+public class CreateDishDTO
 {
     [Required]
     public string Name { get; set; }

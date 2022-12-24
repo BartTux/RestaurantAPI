@@ -2,9 +2,9 @@
 
 namespace RestaurantAPI.Models.Validators;
 
-public class CreateRestaurantDtoValidator : AbstractValidator<CreateRestaurantDto>
+public class CreateRestaurantDTOValidator : AbstractValidator<CreateRestaurantDTO>
 {
-	public CreateRestaurantDtoValidator()
+	public CreateRestaurantDTOValidator()
 	{
 		RuleFor(x => x.Name)
 			.MaximumLength(25);

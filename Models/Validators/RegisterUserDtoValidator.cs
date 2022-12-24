@@ -4,9 +4,9 @@ using RestaurantAPI.Entities;
 
 namespace RestaurantAPI.Models.Validators;
 
-public class RegisterUserDtoValidator : AbstractValidator<RegisterUserDto>
+public class RegisterUserDTOValidator : AbstractValidator<RegisterUserDTO>
 {
-	public RegisterUserDtoValidator(RestaurantDbContext dbContext)
+	public RegisterUserDTOValidator(RestaurantDbContext dbContext)
 	{
         RuleFor(x => x.Email)
             .NotNull()

@@ -1,12 +1,3 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿namespace RestaurantAPI.Models;
 
-namespace RestaurantAPI.Models;
-
-public class LoginDTO
-{
-    [Required]
-    public string Email { get; set; }
-
-    [Required]
-    public string Password { get; set; }
-}
+public record LoginDTO(string Email, string Password);

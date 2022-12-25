@@ -5,7 +5,6 @@ using RestaurantAPI.Exceptions;
 using RestaurantAPI.Models;
 using RestaurantAPI.Services.Contracts;
 using RestaurantAPI.Authorization;
-using AutoMapper;
 using System.Linq.Expressions;
 
 namespace RestaurantAPI.Services;
@@ -76,13 +75,7 @@ public class RestaurantService : IRestaurantService
             Street: r.Address.Street,
             PostalCode: r.Address.PostalCode,
             Dishes: r.Dishes
-                .Select(d => new DishDTO
-                {
-                    Id = d.Id,
-                    Name = d.Name,
-                    Description = d.Description,
-                    Price = d.Price
-                })
+                .Select(d => new DishDTO(d.Id, d.Name, d.Description, d.Price))
                 .ToList()
         ));
 
@@ -115,13 +108,7 @@ public class RestaurantService : IRestaurantService
             Street: restaurant.Address.Street,
             PostalCode: restaurant.Address.PostalCode,
             Dishes: restaurant.Dishes
-                .Select(d => new DishDTO
-                {
-                    Id = d.Id,
-                    Name = d.Name,
-                    Description = d.Description,
-                    Price = d.Price
-                })
+                .Select(d => new DishDTO(d.Id, d.Name, d.Description, d.Price))
                 .ToList()
         );
 
@@ -138,7 +125,7 @@ public class RestaurantService : IRestaurantService
             HasDelivery = createRestaurantDto.HasDelivery,
             ContactEmail = createRestaurantDto.ContactEmail,
             ContactNumber = createRestaurantDto.ContactNumber,
-            CreatedById = _userContextService.UserId, // where user context service is from?
+            CreatedById = (int)_userContextService.UserId, // where user context service is from?
             Address = new Address
             {
                 City = createRestaurantDto.City,
@@ -170,23 +157,32 @@ public class RestaurantService : IRestaurantService
         if (!authorizationResult.Succeeded) 
             throw new ForbidException();
 
-        if(modifyRestaurantDto.Name is not null) 
+        if (modifyRestaurantDto.Name is not null) 
             restaurant.Name = modifyRestaurantDto.Name;
 
-        if(modifyRestaurantDto.Description is not null) 
+        if (modifyRestaurantDto.Description is not null) 
             restaurant.Description = modifyRestaurantDto.Description;
 
-        if(modifyRestaurantDto.Category is not null) 
+        if (modifyRestaurantDto.Category is not null) 
             restaurant.Category = modifyRestaurantDto.Category;
 
-        if(modifyRestaurantDto.HasDelivery is not null) 
+        if (modifyRestaurantDto.HasDelivery is not null) 
             restaurant.HasDelivery = (bool)modifyRestaurantDto.HasDelivery;
 
-        if(modifyRestaurantDto.ContactEmail is not null) 
+        if (modifyRestaurantDto.ContactEmail is not null) 
             restaurant.ContactEmail = modifyRestaurantDto.ContactEmail;
 
-        if(modifyRestaurantDto.ContactNumber is not null) 
+        if (modifyRestaurantDto.ContactNumber is not null) 
             restaurant.ContactNumber = modifyRestaurantDto.ContactNumber;
+
+        if (modifyRestaurantDto.City is not null)
+            restaurant.Address.City = modifyRestaurantDto.City;
+
+        if (modifyRestaurantDto.Street is not null)
+            restaurant.Address.Street = modifyRestaurantDto.Street;
+
+        if (modifyRestaurantDto.PostalCode is not null)
+            restaurant.Address.PostalCode = modifyRestaurantDto.PostalCode;
 
         await _dbContext.SaveChangesAsync();
     }

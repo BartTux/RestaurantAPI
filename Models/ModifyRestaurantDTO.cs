@@ -5,4 +5,7 @@ public record ModifyRestaurantDTO(string? Name,
                                   string? Category,
                                   bool? HasDelivery,
                                   string? ContactEmail,
-                                  string? ContactNumber);
+                                  string? ContactNumber,
+                                  string? City,
+                                  string? Street,
+                                  string? PostalCode);

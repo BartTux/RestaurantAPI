@@ -6,22 +6,22 @@ public class CreateRestaurantDTOValidator : AbstractValidator<CreateRestaurantDT
 {
 	public CreateRestaurantDTOValidator()
 	{
-		RuleFor(x => x.Name)
-			.MaximumLength(25);
+		RuleFor(x => x.Name).MaximumLength(30);
 
-		RuleFor(x => x.Category).NotNull();
+		RuleFor(x => x.Description).MaximumLength(100);
+
+		RuleFor(x => x.Category).MaximumLength(20);
 
 		RuleFor(x => x.ContactEmail)
-			.EmailAddress();
+			.EmailAddress()
+			.MaximumLength(30);
 
-		RuleFor(x => x.ContactNumber).NotNull();
+		RuleFor(x => x.ContactNumber).MaximumLength(15);
 
-		RuleFor(x => x.City)
-			.MaximumLength(50);
+		RuleFor(x => x.City).MaximumLength(20);
 
-		RuleFor(x => x.Street)
-			.MaximumLength(50);
+		RuleFor(x => x.Street).MaximumLength(30);
 
-        RuleFor(x => x.PostalCode).NotNull();
+		RuleFor(x => x.PostalCode).MaximumLength(8);
     }
 }

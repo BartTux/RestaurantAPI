@@ -13,8 +13,7 @@ public class RestaurantSeeder
 
     public void Seed()
     {
-        if (!_dbContext.Database.CanConnect())
-            return;
+        if (!_dbContext.Database.CanConnect()) return;
 
         if (!_dbContext.Restaurants.Any())
         {

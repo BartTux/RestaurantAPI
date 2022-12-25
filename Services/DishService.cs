@@ -3,21 +3,16 @@ using RestaurantAPI.Models;
 using RestaurantAPI.Services.Contracts;
 using RestaurantAPI.Entities;
 using RestaurantAPI.Exceptions;
-using AutoMapper;
 
 namespace RestaurantAPI.Services;
 
 public class DishService : IDishService
 {
-    private readonly IMapper _mapper;
     private readonly ILogger<DishService> _logger;
     private readonly RestaurantDbContext _dbContext;
 
-    public DishService(IMapper mapper, 
-                       ILogger<DishService> logger, 
-                       RestaurantDbContext dbContext)
+    public DishService(ILogger<DishService> logger, RestaurantDbContext dbContext)
     {
-        _mapper = mapper;
         _logger = logger;
         _dbContext = dbContext;
     }
@@ -26,7 +21,14 @@ public class DishService : IDishService
     {
         var restaurant = await GetRestaurantByIdAsync(restaurantId);
 
-        var dishesDto = _mapper.Map<List<DishDTO>>(restaurant.Dishes);
+        var dishesDto = restaurant.Dishes.Select(d => new DishDTO 
+        (
+            Id: d.Id,
+            Name: d.Name,
+            Description: d.Description,
+            Price: d.Price
+        )); 
+
         return dishesDto;
     }
 
@@ -35,17 +37,21 @@ public class DishService : IDishService
         var restaurant = await GetRestaurantByIdAsync(restaurantId);
         var dish = GetDishById(restaurant, dishId);
 
-        var dishDto = _mapper.Map<DishDTO>(dish);
-
+        var dishDto = new DishDTO(dish.Id, dish.Name, dish.Description, dish.Price);
         return dishDto;
     }
 
     public async Task<int> CreateAsync(int restaurantId, CreateDishDTO createDishDto)
     {
         var restaurant = await GetRestaurantByIdAsync(restaurantId);
-        var dish = _mapper.Map<Dish>(createDishDto);
 
-        dish.RestaurantId = restaurantId;
+        var dish = new Dish
+        {
+            Name = createDishDto.Name,
+            Description = createDishDto.Description,
+            Price = createDishDto.Price,
+            RestaurantId = restaurantId
+        };
 
         restaurant.Dishes.Add(dish);
         await _dbContext.SaveChangesAsync();

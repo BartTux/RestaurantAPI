@@ -1,13 +1,3 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿namespace RestaurantAPI.Models;
 
-namespace RestaurantAPI.Models;
-
-public class CreateDishDTO
-{
-    [Required]
-    public string Name { get; set; }
-    public string Description { get; set; } = string.Empty;
-    public decimal Price { get; set; }
-
-    public int RestaurantId { get; set; }
-}
+public record CreateDishDTO(string Name, string? Description, decimal Price);

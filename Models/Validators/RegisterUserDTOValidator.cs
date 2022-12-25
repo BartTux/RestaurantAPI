@@ -9,27 +9,21 @@ public class RegisterUserDTOValidator : AbstractValidator<RegisterUserDTO>
 	public RegisterUserDTOValidator(RestaurantDbContext dbContext)
 	{
         RuleFor(x => x.Email)
-            .NotNull()
-            .NotEmpty()
             .EmailAddress()
+            .MaximumLength(30)
             .CustomAsync(async (value, context, cancellationToken) =>
             {
                 var isEmailInUse = await dbContext.Users.AnyAsync(x => x.Email == value);
 
                 if (isEmailInUse)
-                    context.AddFailure("Email", "This e-mail address is already taken");
+                    context.AddFailure("E-mail", "This e-mail address is already taken");
             });
 
-        RuleFor(x => x.Password)
-            .NotNull()
-            .MinimumLength(8);
+        RuleFor(x => x.Password).MinimumLength(8);
+        RuleFor(x => x.ConfirmPassword).Equal(x => x.Password);
 
-        RuleFor(x => x.ConfirmPassword)
-            .NotNull()
-            .Equal(x => x.Password);
-
-        RuleFor(x => x.FirstName).NotNull();
-
-        RuleFor(x => x.Nationality).NotNull();
+        RuleFor(x => x.FirstName).MaximumLength(20);
+        RuleFor(x => x.LastName).MaximumLength(30);
+        RuleFor(x => x.Nationality).MaximumLength(20);
     }
 }

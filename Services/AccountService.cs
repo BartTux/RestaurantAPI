@@ -14,17 +14,14 @@ namespace RestaurantAPI.Services;
 
 public class AccountService : IAccountService
 {
-    private readonly IMapper _mapper;
     private readonly IPasswordHasher<User> _passwordHasher;
     private readonly AuthenticationSettings _authenticationSettings;
     private readonly RestaurantDbContext _dbContext;
 
-    public AccountService(IMapper mapper, 
-                          IPasswordHasher<User> passwordHasher, 
+    public AccountService(IPasswordHasher<User> passwordHasher, 
                           AuthenticationSettings authenticationSettings, 
                           RestaurantDbContext dbContext)
     {
-        _mapper = mapper;
         _passwordHasher = passwordHasher;
         _authenticationSettings = authenticationSettings;
         _dbContext = dbContext;
@@ -32,7 +29,15 @@ public class AccountService : IAccountService
 
     public async Task RegisterUserAsync(RegisterUserDTO registerUserDto)
     {
-        var user = _mapper.Map<User>(registerUserDto);
+        var user = new User
+        {
+            Email = registerUserDto.Email,
+            FirstName = registerUserDto.FirstName,
+            LastName = registerUserDto.LastName,
+            DateOfBirth = registerUserDto.DateOfBirth,
+            Nationality = registerUserDto.Nationality,
+            RoleId = registerUserDto.RoleId
+        };
 
         user.PasswordHash = _passwordHasher.HashPassword(user, registerUserDto.Password);
 

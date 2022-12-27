@@ -3,6 +3,7 @@ using RestaurantAPI.Models;
 using RestaurantAPI.Services.Contracts;
 using RestaurantAPI.Entities;
 using RestaurantAPI.Exceptions;
+using RestaurantAPI.Factories;
 
 namespace RestaurantAPI.Services;
 
@@ -21,14 +22,7 @@ public class DishService : IDishService
     {
         var restaurant = await GetRestaurantByIdAsync(restaurantId);
 
-        var dishesDto = restaurant.Dishes.Select(d => new DishDTO 
-        (
-            Id: d.Id,
-            Name: d.Name,
-            Description: d.Description,
-            Price: d.Price
-        )); 
-
+        var dishesDto = restaurant.Dishes.Select(d => DishDTO_Factory.Create(d)); 
         return dishesDto;
     }
 
@@ -37,7 +31,7 @@ public class DishService : IDishService
         var restaurant = await GetRestaurantByIdAsync(restaurantId);
         var dish = GetDishById(restaurant, dishId);
 
-        var dishDto = new DishDTO(dish.Id, dish.Name, dish.Description, dish.Price);
+        var dishDto = DishDTO_Factory.Create(dish);
         return dishDto;
     }
 
@@ -45,13 +39,7 @@ public class DishService : IDishService
     {
         var restaurant = await GetRestaurantByIdAsync(restaurantId);
 
-        var dish = new Dish
-        {
-            Name = createDishDto.Name,
-            Description = createDishDto.Description,
-            Price = createDishDto.Price,
-            RestaurantId = restaurantId
-        };
+        var dish = DishFactory.Create(createDishDto, restaurantId);
 
         restaurant.Dishes.Add(dish);
         await _dbContext.SaveChangesAsync();

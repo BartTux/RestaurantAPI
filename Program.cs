@@ -94,7 +94,6 @@ builder.Services.AddDbContext<RestaurantDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("RestaurantDb"))
 );
 
-builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddScoped<RestaurantSeeder>();
 
 builder.Services.AddScoped<IRestaurantService, RestaurantService>();

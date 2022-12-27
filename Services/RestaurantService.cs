@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 using RestaurantAPI.Entities;
 using RestaurantAPI.Exceptions;
 using RestaurantAPI.Models;
 using RestaurantAPI.Services.Contracts;
 using RestaurantAPI.Authorization;
-using System.Linq.Expressions;
+using RestaurantAPI.Factories;
 
 namespace RestaurantAPI.Services;
 
@@ -64,20 +65,7 @@ public class RestaurantService : IRestaurantService
             .ToListAsync()
             ?? throw new NotFoundException("Restaurant not found...");
 
-        var restaurantsDto = restaurants.Select(r => new RestaurantDTO
-        (
-            Id: r.Id,
-            Name: r.Name,
-            Description: r.Description,
-            Category: r.Category,
-            HasDelivery: r.HasDelivery,
-            City: r.Address.City,
-            Street: r.Address.Street,
-            PostalCode: r.Address.PostalCode,
-            Dishes: r.Dishes
-                .Select(d => new DishDTO(d.Id, d.Name, d.Description, d.Price))
-                .ToList()
-        ));
+        var restaurantsDto = restaurants.Select(r => RestaurantDTO_Factory.Create(r));
 
         var restaurantResults = new PageResponse<RestaurantDTO>(
             restaurantsDto,
@@ -97,42 +85,15 @@ public class RestaurantService : IRestaurantService
             .FirstOrDefaultAsync(r => r.Id == id)
             ?? throw new NotFoundException("Restaurant not found...");
 
-        var restaurantDto = new RestaurantDTO
-        (
-            Id: restaurant.Id,
-            Name: restaurant.Name,
-            Description: restaurant.Description,
-            Category: restaurant.Category,
-            HasDelivery: restaurant.HasDelivery,
-            City: restaurant.Address.City,
-            Street: restaurant.Address.Street,
-            PostalCode: restaurant.Address.PostalCode,
-            Dishes: restaurant.Dishes
-                .Select(d => new DishDTO(d.Id, d.Name, d.Description, d.Price))
-                .ToList()
-        );
-
+        var restaurantDto = RestaurantDTO_Factory.Create(restaurant);
         return restaurantDto;
     }
 
     public async Task<Restaurant> CreateAsync(CreateRestaurantDTO createRestaurantDto)
     {
-        var restaurant = new Restaurant
-        {
-            Name = createRestaurantDto.Name,
-            Description = createRestaurantDto.Description,
-            Category = createRestaurantDto.Category,
-            HasDelivery = createRestaurantDto.HasDelivery,
-            ContactEmail = createRestaurantDto.ContactEmail,
-            ContactNumber = createRestaurantDto.ContactNumber,
-            CreatedById = (int)_userContextService.UserId, // where user context service is from?
-            Address = new Address
-            {
-                City = createRestaurantDto.City,
-                Street = createRestaurantDto.Street,
-                PostalCode = createRestaurantDto.PostalCode
-            }
-        };
+        var restaurant = RestaurantFactory.Create(
+            createRestaurantDto, 
+            (int)_userContextService.UserId);
 
         await _dbContext.Restaurants.AddAsync(restaurant);
         await _dbContext.SaveChangesAsync();
@@ -157,33 +118,7 @@ public class RestaurantService : IRestaurantService
         if (!authorizationResult.Succeeded) 
             throw new ForbidException();
 
-        if (modifyRestaurantDto.Name is not null) 
-            restaurant.Name = modifyRestaurantDto.Name;
-
-        if (modifyRestaurantDto.Description is not null) 
-            restaurant.Description = modifyRestaurantDto.Description;
-
-        if (modifyRestaurantDto.Category is not null) 
-            restaurant.Category = modifyRestaurantDto.Category;
-
-        if (modifyRestaurantDto.HasDelivery is not null) 
-            restaurant.HasDelivery = (bool)modifyRestaurantDto.HasDelivery;
-
-        if (modifyRestaurantDto.ContactEmail is not null) 
-            restaurant.ContactEmail = modifyRestaurantDto.ContactEmail;
-
-        if (modifyRestaurantDto.ContactNumber is not null) 
-            restaurant.ContactNumber = modifyRestaurantDto.ContactNumber;
-
-        if (modifyRestaurantDto.City is not null)
-            restaurant.Address.City = modifyRestaurantDto.City;
-
-        if (modifyRestaurantDto.Street is not null)
-            restaurant.Address.Street = modifyRestaurantDto.Street;
-
-        if (modifyRestaurantDto.PostalCode is not null)
-            restaurant.Address.PostalCode = modifyRestaurantDto.PostalCode;
-
+        RestaurantFactory.Set(restaurant, modifyRestaurantDto);
         await _dbContext.SaveChangesAsync();
     }
 

@@ -1,9 +1,9 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using RestaurantAPI.Entities;
 using RestaurantAPI.Exceptions;
+using RestaurantAPI.Factories;
 using RestaurantAPI.Models;
 using RestaurantAPI.Services.Contracts;
 using System.IdentityModel.Tokens.Jwt;
@@ -29,15 +29,7 @@ public class AccountService : IAccountService
 
     public async Task RegisterUserAsync(RegisterUserDTO registerUserDto)
     {
-        var user = new User
-        {
-            Email = registerUserDto.Email,
-            FirstName = registerUserDto.FirstName,
-            LastName = registerUserDto.LastName,
-            DateOfBirth = registerUserDto.DateOfBirth,
-            Nationality = registerUserDto.Nationality,
-            RoleId = registerUserDto.RoleId
-        };
+        var user = UserFactory.Create(registerUserDto);
 
         user.PasswordHash = _passwordHasher.HashPassword(user, registerUserDto.Password);
 
